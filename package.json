@@ -1,0 +1,31 @@
+{
+  "name": "echarts-doc-cli",
+  "version": "0.0.0",
+  "description": "A cli for echarts documentation.",
+  "main": "index.js",
+  "scripts": {
+    "build": "node index.js",
+    "start": "opener dist/index.html",
+    "start:server": "http-server ./dist -o -c -1",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "echarts",
+    "echarts-doc",
+    "echarts-cli"
+  ],
+  "author": "plainheart <yhen@all-my-life.cn>",
+  "license": "MIT",
+  "devDependencies": {
+    "blueimp-md5": "^2.18.0",
+    "chalk": "^4.1.0",
+    "download": "^8.0.0",
+    "execa": "^5.0.0",
+    "fs-extra": "^9.0.1",
+    "globby": "^11.0.2",
+    "http-server": "^0.12.3",
+    "opener": "^1.5.2",
+    "spinnies": "^0.5.1",
+    "tree-kill": "^1.2.2"
+  }
+}
