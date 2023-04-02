@@ -1,9 +1,10 @@
 const path = require('path')
 
 module.exports = {
+  officialWebsitePath: 'https://echarts.apache.org',
   galleryViewPath: 'https://echarts.apache.org/examples/${lang}/view.html?c=',
   galleryEditorPath: 'https://echarts.apache.org/examples/${lang}/editor.html?c=',
-  officialWebsitePath: 'https://echarts.apache.org',
+  handbookPath: 'https://echarts.apache.org/handbook/${lang}/',
   websitePath: './',
   imagePath: 'asset/img/',
   gl: {
