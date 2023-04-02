@@ -1,12 +1,11 @@
-const path = require('path')
+const path = require('node:path')
 
 const DOC_REPO = 'https://github.com/apache/echarts-doc.git'
-const DOC_REPO_CNPM = 'https://github.com.cnpmjs.org/apache/echarts-doc.git'
-const DOC_REPO_CNPM_TEST = 'https://github.com.cnpmjs.org/plainheart/plainheart.git'
+const DOC_REPO_MIRROR = 'https://hub.fgit.gq/apache/echarts-doc.git'
 const DOC_REPO_BRANCH = 'master'
 
 const PATH_DIST = path.resolve(__dirname, '../dist')
-const PATH_TMP = path.resolve(__dirname, '../tmp')
+const PATH_TMP = path.resolve(__dirname, '../node_modules/.cache/echarts-doc-tmp')
 const PATH_REPOS = path.resolve(PATH_TMP, './repos')
 const PATH_REPOS_DIST = path.resolve(PATH_REPOS, './dist')
 const PATH_REPO_DOC = path.resolve(PATH_REPOS, './echarts-doc')
@@ -23,8 +22,7 @@ const REG_URL_CSS = /url\s*\((\s*[A-Za-z0-9\-\_\.\/\:]+\s*)\)\s*;?/gi
 
 module.exports = {
   DOC_REPO,
-  DOC_REPO_CNPM,
-  DOC_REPO_CNPM_TEST,
+  DOC_REPO_MIRROR,
   DOC_REPO_BRANCH,
 
   PATH_DIST,

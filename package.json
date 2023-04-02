@@ -1,18 +1,19 @@
 {
   "name": "echarts-doc-cli",
-  "version": "0.0.0",
-  "description": "A cli for echarts documentation.",
+  "version": "0.0.1",
+  "description": "A cli for offline documentation of Apache ECharts.",
   "main": "index.js",
   "scripts": {
     "build": "node index.js",
     "start": "npx opener dist/index.html",
-    "start:server": "npx http-server ./dist -o -c -1",
+    "start:server": "npx http-server ./dist -o -c-1 --cors -g",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "echarts",
     "echarts-doc",
-    "echarts-cli"
+    "echarts-cli",
+    "offline"
   ],
   "author": "plainheart <yhen@all-my-life.cn>",
   "license": "MIT",
@@ -24,7 +25,6 @@
     "fs-extra": "^11.1.1",
     "globby": "^11.1.0",
     "opener": "^1.5.2",
-    "spinnies": "^0.5.1",
-    "tree-kill": "^1.2.2"
+    "spinnies": "^0.5.1"
   }
 }

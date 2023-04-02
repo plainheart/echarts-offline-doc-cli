@@ -1,15 +1,14 @@
-const path = require('path')
+const path = require('node:path')
 const spawn = require('cross-spawn')
 const fs = require('fs-extra')
 const chalk = require('chalk')
 const globby = require('globby')
-const treeKill = require('tree-kill')
 const Spinnies = require('spinnies')
 
 const {
   PATH_DIST, PATH_TMP, PATH_REPO_DOC, PATH_REPO_DOC_CONFIG, PATH_REPO_DOC_PUBLIC,
   SPINNER_MAIN, SPINNER_CHILD,
-  DOC_REPO_CNPM
+  DOC_REPO_MIRROR
 } = require('./config')
 
 // the process to clone doc repo
@@ -41,14 +40,11 @@ async function cloneDocRepo() {
   const clonePromise = new Promise((resolve, reject) => {
     cloneProcess = spawn(
       'git',
-      // https://git-scm.com/docs/git-clone#git-clone---progress
-      ['clone', '--progress', DOC_REPO_CNPM, '-b', 'master', PATH_REPO_DOC],
+      // TODO make DOC_REPO_MIRROR configurable
+      ['clone', '--depth', 1, '--progress', DOC_REPO_MIRROR, '-b', 'master', PATH_REPO_DOC],
       {
-        // stdio: 'inherit',
-        // stdio: 'ignore',
         windowsHide: true,
-        detached: false,
-        // uid: 26001
+        detached: false
       }
     )
 
@@ -107,13 +103,12 @@ async function install() {
 
   const installPromise = new Promise((resolve, reject) => {
     installProcess = spawn(
-      'npm', ['i'],
+      'npm', ['ci'],
       {
         cwd: PATH_REPO_DOC,
         stdio: 'ignore',
         windowsHide: true,
-        detached: false,
-        // uid: 50002
+        detached: false
       }
     )
 
@@ -159,6 +154,9 @@ async function build() {
     path.resolve(PATH_REPO_DOC_CONFIG, configFileName)
   )
 
+  // compatible with node v18
+  process.env.NODE_OPTIONS = '--openssl-legacy-provider'
+
   const buildPromise = new Promise((resolve, reject) => {
     buildSiteProcess = spawn(
       'npm', ['run', 'build:site'],
@@ -166,8 +164,7 @@ async function build() {
         cwd: PATH_REPO_DOC,
         stdio: 'ignore',
         windowsHide: true,
-        detached: false,
-        // uid: 50003
+        detached: false
       }
     )
 
@@ -179,8 +176,7 @@ async function build() {
             cwd: PATH_REPO_DOC,
             stdio: 'ignore',
             windowsHide: true,
-            detached: false,
-            // uid: 50004
+            detached: false
           }
         )
         buildProcess.on('close', (code, signal) => {
@@ -215,9 +211,7 @@ async function build() {
       }
 
       const deleteFiles = await globby(['**/*-content.html'], options)
-      deleteFiles.forEach(file => {
-        fs.removeSync(file)
-      })
+      deleteFiles.forEach(file => fs.removeSync(file))
 
       const viewOnlineJS = require('./config/view-online')
       // inject view-online
@@ -248,55 +242,6 @@ async function build() {
 }
 
 /**
- * To kill a child process with specifed signal
- *
- * @param  {object} childProcess child process
- * @param  {string} signal       kill signal
- */
-async function kill(childProcess, signal) {
-  if (!childProcess || childProcess.killed) {
-    return Promise.resolve()
-  }
-  signal = signal || 'SIGKILL'
-  childProcess.removeAllListeners()
-  return new Promise((resolve, reject) => {
-    childProcess.on('close', resolve)
-    childProcess.on('error', reject)
-    childProcess.kill(signal)
-  })
-}
-
-async function kill2(childProcess, signal) {
-  if (!childProcess || childProcess.killed) {
-    return Promise.resolve()
-  }
-  signal = signal || 'SIGKILL'
-  childProcess.removeAllListeners()
-  console.log(childProcess.pid)
-  return new Promise((resolve, reject) => {
-    treeKill(childProcess.pid, signal, err => {
-      err ? reject(err) : resolve()
-    })
-  })
-}
-
-/**
- * Terminal the spinner and child process
- */
-async function term() {
-  // stop spinners
-  spinners.stopAll()
-  // kill child process
-  await Promise.all([
-    kill2(cloneProcess),
-    kill2(installProcess),
-    kill2(buildProcess),
-    kill2(buildSiteProcess)
-  ])
-  console.log('term all')
-}
-
-/**
  * clean up temporary files
  */
 function cleanup() {
@@ -304,26 +249,14 @@ function cleanup() {
     // remove tmp files
     fs.removeSync(PATH_TMP)
   } catch (e) {
-    console.error(chalk.red('failed to clean up'))
+    console.error(chalk.red('failed to clean up'), e)
     throw e
   }
 }
 
-process.on('beforeExit', async (code) => {
-  console.log('beforeExit')
-  await term()
+process.on('beforeExit', code => {
+  cleanup()
   process.exit(code)
-})
-
-process.on('exit', code => {
-  console.log('exit')
-  term()
-  code !== 0 && cleanup()
-})
-
-process.on('SIGINT', () => {
-  console.log('SIGINT')
-  process.exit(-1)
 })
 
 process.on('uncaughtException', e => {
@@ -340,7 +273,7 @@ async function run() {
     // clone doc repo
     await cloneDocRepo()
 
-    // install necessaray dependencies
+    // install necessary dependencies
     await install()
 
     // download
@@ -356,8 +289,7 @@ async function run() {
 
   } catch (e) {
     console.error(chalk.red(e))
-    await term()
-    process.exit(-3)
+    process.exit(-1)
   }
 }
 

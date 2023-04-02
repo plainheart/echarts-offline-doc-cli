@@ -1,8 +1,10 @@
+const path = require('node:path')
+const crypto = require('node:crypto')
 const fs = require('fs-extra')
-const path = require('path')
 const download = require('download')
 const globby = require('globby')
-const md5 = require('blueimp-md5')
+
+const md5 = str => crypto.createHash('md5').update(str).digest('hex')
 
 const {
   PATH_REPO_DOC_ASSETS,
