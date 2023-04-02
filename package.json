@@ -1,5 +1,5 @@
 {
-  "name": "echarts-doc-cli",
+  "name": "echarts-offline-doc-cli",
   "version": "0.0.1",
   "description": "A cli for offline documentation of Apache ECharts.",
   "main": "index.js",
