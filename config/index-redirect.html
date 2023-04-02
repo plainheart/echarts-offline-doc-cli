@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title></title>
+  <title>Redirecting...</title>
 </head>
 <body>
   <script type="text/javascript">
-    window.location.href = 'public/zh/option.html';
+    var lang = navigator.language || navigator.browserLanguage;
+    window.location.href = 'public/' + (lang && lang.toLowerCase().indexOf('zh') === 0 ? 'zh' : 'en') + '/option.html';
   </script>
 </body>
 </html>
