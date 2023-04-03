@@ -7,7 +7,6 @@ const Spinnies = require('spinnies')
 
 const {
   PATH_DIST, PATH_TMP, PATH_REPO_DOC, PATH_REPO_DOC_CONFIG, PATH_REPO_DOC_PUBLIC,
-  SPINNER_MAIN, SPINNER_CHILD,
   DOC_REPO, USE_CNPM
 } = require('./config')
 
@@ -25,6 +24,9 @@ const spinners = new Spinnies({
   succeedPrefix : '✔️',
   failPrefix: '❌'
 })
+
+const SPINNER_MAIN = 'spinner-main'
+const SPINNER_CHILD = 'spinner-child'
 
 /**
  * To clone the documentation repository

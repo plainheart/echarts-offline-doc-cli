@@ -6,11 +6,12 @@ const globby = require('globby')
 
 const md5 = str => crypto.createHash('md5').update(str).digest('hex')
 
+const REG_URL_CSS = /url\s*\((\s*[A-Za-z0-9\-\_\.\/\:]+\s*)\)\s*;?/gi
+
 const {
   PATH_REPO_DOC_ASSETS,
   PATH_REPO_DOC_PUBLIC,
-  PATH_REPO_DOC_SRC,
-  REG_URL_CSS
+  PATH_REPO_DOC_SRC
 } = require('../config')
 
 function addProtocol(url) {
