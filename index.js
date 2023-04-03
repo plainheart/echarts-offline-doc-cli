@@ -154,8 +154,10 @@ async function build() {
     path.resolve(PATH_REPO_DOC_CONFIG, configFileName)
   )
 
-  // compatible with node v18
-  process.env.NODE_OPTIONS = '--openssl-legacy-provider'
+  if (!process.env.GITHUB_ACTIONS) {
+    // compatible with node v18
+    process.env.NODE_OPTIONS = '--openssl-legacy-provider'
+  }
 
   const buildPromise = new Promise((resolve, reject) => {
     buildSiteProcess = spawn(
