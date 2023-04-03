@@ -11,7 +11,7 @@ const {
   PATH_REPO_DOC_PUBLIC,
   PATH_REPO_DOC_SRC,
   REG_URL_CSS
-} = require('../../config')
+} = require('../config')
 
 function addProtocol(url) {
   if (url.startsWith('//')) {
@@ -57,10 +57,10 @@ async function downloadAll() {
   const fileMappings = {}
 
   async function makeDownloadPromise(resourceUrl) {
-    let idx = resourceUrl.lastIndexOf('.')
-    let queryMarkIdx = resourceUrl.lastIndexOf('?')
-    let ext = resourceUrl.slice(idx, queryMarkIdx === -1 ? void 0 : queryMarkIdx)
-    let filename = md5(resourceUrl) + ext
+    const idx = resourceUrl.lastIndexOf('.')
+    const queryMarkIdx = resourceUrl.lastIndexOf('?')
+    const ext = resourceUrl.slice(idx, queryMarkIdx === -1 ? void 0 : queryMarkIdx)
+    const filename = md5(resourceUrl) + ext
     const downloadUrl = addProtocol(resourceUrl)
 
     await download(downloadUrl, PATH_REPO_DOC_ASSETS, { filename })
@@ -74,10 +74,10 @@ async function downloadAll() {
       const matches = cssContent.matchAll(REG_URL_CSS)
       for (const match of matches) {
         let t = match[1]
-        let idx = t.lastIndexOf('.')
-        let queryMarkIdx = t.lastIndexOf('?')
-        let ext = t.slice(idx, queryMarkIdx === -1 ? void 0 : queryMarkIdx)
-        let filename = md5(t) + ext
+        const idx = t.lastIndexOf('.')
+        const queryMarkIdx = t.lastIndexOf('?')
+        const ext = t.slice(idx, queryMarkIdx === -1 ? void 0 : queryMarkIdx)
+        const filename = md5(t) + ext
         if (!t.startsWith('http')) {
           t = root + t
         }
@@ -100,8 +100,6 @@ async function downloadAll() {
   await Promise.all(
     downloadList.map(downloadItem => makeDownloadPromise(downloadItem))
   )
-
-  console.log(fileMappings)
 
   return fileMappings
 }

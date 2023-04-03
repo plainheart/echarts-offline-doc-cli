@@ -8,7 +8,7 @@ const Spinnies = require('spinnies')
 const {
   PATH_DIST, PATH_TMP, PATH_REPO_DOC, PATH_REPO_DOC_CONFIG, PATH_REPO_DOC_PUBLIC,
   SPINNER_MAIN, SPINNER_CHILD,
-  DOC_REPO_MIRROR
+  DOC_REPO, USE_CNPM
 } = require('./config')
 
 // the process to clone doc repo
@@ -22,8 +22,8 @@ let buildProcess
 
 // spinners
 const spinners = new Spinnies({
-  successPrefix: '√',
-  failPrefix: '✖'
+  succeedPrefix : '✔️',
+  failPrefix: '❌'
 })
 
 /**
@@ -34,14 +34,13 @@ async function cloneDocRepo() {
   spinners.add(SPINNER_CHILD, { color: 'white' })
 
   spinners.update(SPINNER_MAIN, {
-    text: 'Cloning doc repo...'
+    text: 'Cloning doc repo from ' + DOC_REPO + '...'
   })
 
   const clonePromise = new Promise((resolve, reject) => {
     cloneProcess = spawn(
       'git',
-      // TODO make DOC_REPO_MIRROR configurable
-      ['clone', '--depth', 1, '--progress', DOC_REPO_MIRROR, '-b', 'master', PATH_REPO_DOC],
+      ['clone', '--depth', 1, '--progress', DOC_REPO, '-b', 'master', PATH_REPO_DOC],
       {
         windowsHide: true,
         detached: false
@@ -103,7 +102,7 @@ async function install() {
 
   const installPromise = new Promise((resolve, reject) => {
     installProcess = spawn(
-      'npm', ['ci'],
+      USE_CNPM ? 'cnpm' : 'npm', ['ci'],
       {
         cwd: PATH_REPO_DOC,
         stdio: 'ignore',
@@ -124,6 +123,7 @@ async function install() {
       spinners.succeed(SPINNER_MAIN, {
         text: 'Install dependencies, done.'
       })
+      console.log()
     }
     else {
       spinners.fail(SPINNER_MAIN, {
@@ -145,11 +145,11 @@ async function build() {
     text: 'Building...'
   })
 
-  fs.removeSync(PATH_DIST)
+  await fs.remove(PATH_DIST)
 
   const configFileName = 'env.local.js'
   // copy config
-  fs.copySync(
+  await fs.copy(
     path.resolve(__dirname, `./config/${configFileName}`),
     path.resolve(PATH_REPO_DOC_CONFIG, configFileName)
   )
@@ -226,6 +226,7 @@ async function build() {
       spinners.succeed(SPINNER_MAIN, {
         text: 'Build, done.'
       })
+      console.log()
     }
     else {
       spinners.fail(SPINNER_MAIN, {
@@ -265,7 +266,7 @@ process.on('uncaughtException', e => {
   process.exit(-2)
 })
 
-async function run() {
+module.exports = async function run() {
   try {
     // cleanup first
     cleanup()
@@ -277,12 +278,12 @@ async function run() {
     await install()
 
     // download
-    const download = require('./build/downloads')
+    const download = require('./build/download')
     const fileMappings = await download()
 
     // do some modifications
-    const modifications = require('./build/modifications')
-    await modifications(fileMappings)
+    const modify = require('./build/modify')
+    await modify(fileMappings)
 
     // build
     await build()
@@ -292,5 +293,3 @@ async function run() {
     process.exit(-1)
   }
 }
-
-run()

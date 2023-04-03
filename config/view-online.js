@@ -11,8 +11,7 @@ module.exports = function(lang) {
       link.style.cssText = 'float:right;color:#29d;line-height:50px;margin-right:20px;text-decoration:none;';
       link.addEventListener('click', function(e) {
         e.preventDefault();
-        var win = window.open();
-        win.location.href = '${officialWebsitePath}/${lang}/' + location.pathname.split('/').pop() + location.search + location.hash;
+        location.href = '${officialWebsitePath}/${lang}/' + location.pathname.split('/').pop() + location.search + location.hash;
       });
       $header.appendChild(link);
     </script>

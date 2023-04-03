@@ -1,13 +1,15 @@
 {
   "name": "echarts-offline-doc-cli",
   "version": "0.0.1",
-  "description": "A cli for offline documentation of Apache ECharts.",
+  "description": "A CLI tool for offline documentation of Apache ECharts.",
   "main": "index.js",
   "scripts": {
-    "build": "node index.js",
+    "build": "node ./bin/echarts-offline-doc.js",
     "start": "npx opener dist/index.html",
-    "start:server": "npx http-server ./dist -o -c-1 --cors -g",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start:server": "npx http-server ./dist -o -c-1 --cors -g"
+  },
+  "bin": {
+    "echarts-offline-doc": "./bin/echarts-offline-doc.js"
   },
   "keywords": [
     "echarts",
@@ -20,6 +22,7 @@
   "devDependencies": {
     "blueimp-md5": "^2.18.0",
     "chalk": "^4.1.2",
+    "commander": "^10.0.0",
     "cross-spawn": "^7.0.3",
     "download": "^8.0.0",
     "fs-extra": "^11.1.1",

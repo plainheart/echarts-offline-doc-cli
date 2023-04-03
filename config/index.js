@@ -24,6 +24,7 @@ module.exports = {
   DOC_REPO,
   DOC_REPO_MIRROR,
   DOC_REPO_BRANCH,
+  USE_CNPM: false,
 
   PATH_DIST,
   PATH_TMP,

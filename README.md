@@ -1,2 +1,2 @@
-# echarts-doc-cli
-A CLI tool for view the documentaion of ECharts offline.
+# echarts-offline-doc-cli
+A CLI tool for offline documentation of Apache ECharts.

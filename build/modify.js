@@ -7,7 +7,7 @@ const {
   PATH_REPO_DOC_PUBLIC,
   PATH_REPO_DOC_SRC,
   PATH_REPO_DOC
-} = require('../../config')
+} = require('../config')
 
 const rootSplit = PATH_REPO_DOC.split(path.sep)
 const rootLevel = rootSplit[rootSplit.length - 1]
