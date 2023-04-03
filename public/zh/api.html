@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Apache ECharts 文档 - API</title>
+    <link rel="stylesheet" href="../lib/reset.css">
+    <script src="../lib/pace.min.js"></script>
+</head>
+<body>
+    <div id="header">
+        <h1></h1>
+        <a class="lang" href="../zh/option.html">EN</a>
+    </div>
+    <script>
+        document.querySelector('#header h1').innerHTML = document.title;
+        document.querySelector('#header .lang').addEventListener('click', e => {
+            e.preventDefault();
+            window.location.href = '../en/' + location.pathname.split('/').pop() + location.search + location.hash;
+        });
+    </script>
+
+    <div id="app"></div>
+    <link rel="stylesheet" href="../../public/assets/bc0d51574466f1d5d41504784e43553a.css">
+    <link rel="stylesheet" href="../css/doc-bundle.css">
+    <script src="../../public/assets/f731cc4e6f02e00582846a4f206ff6fd.js"></script>
+    <script src="../../public/assets/0dc1c0d413a2d2d07223cbc9a51f29ac.js"></script>
+    <script src="../../public/assets/3c98d7c2ffde5aecdeb56e32b96f74e3.js"></script>
+    <script src="../../public/assets/813306c230dbc0832b014e85a30f7fe7.js"></script>
+    <script src="../../public/assets/9d35df14cab3a6954775fb69d133942c.js"></script>
+    <script src="../js/doc-bundle.js"></script>
+    <script>
+        echartsDoc.init('#app', {
+            baseUrl: 'documents/api-parts/',
+            docType: 'api',
+            locale: 'zh'
+        });
+    </script>
+
+    <script>
+      var $header = document.querySelector('#header');
+      var link = document.createElement('a');
+      link.href = 'javascript:void(0)';
+      link.target = '_blank';
+      link.innerText = '在线文档';
+      link.style.cssText = 'float:right;color:#29d;line-height:50px;margin-right:20px;text-decoration:none;';
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        location.href = 'https://echarts.apache.org/zh/' + location.pathname.split('/').pop() + location.search + location.hash;
+      });
+      $header.appendChild(link);
+    </script>
+  </body>
+</html>
