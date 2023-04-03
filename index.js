@@ -214,10 +214,9 @@ async function build() {
       deleteFiles.forEach(file => fs.removeSync(file))
 
       const viewOnlineJS = require('./config/view-online')
-      // inject view-online
+      // inject view-online script
       const htmls = await globby(['**/*.html'], options)
       htmls.forEach(html => {
-        //</body>
         let content = fs.readFileSync(html, { encoding: 'utf8' })
         content = content.replace('<\/body>', viewOnlineJS(html.indexOf('/zh/') !== -1 ? 'zh' : 'en') + '</body>')
         fs.writeFileSync(html, content, { encoding: 'utf8' })

@@ -1,7 +1,7 @@
 const { officialWebsitePath } = require('./env.local')
 
 module.exports = function(lang) {
-  return `
+  return /* html */`
     <script>
       var $header = document.querySelector('#header');
       var link = document.createElement('a');

@@ -39,6 +39,8 @@ async function findDownloadList() {
     }
   })
 
+  // TODO url in local CSS files
+
   const configJS = fs.readFileSync(
     path.resolve(PATH_REPO_DOC_SRC, './config.js'),
     { encoding: 'utf8' }
