@@ -6,7 +6,11 @@ const globby = require('globby')
 const Spinnies = require('spinnies')
 
 const {
-  PATH_DIST, PATH_TMP, PATH_REPO_DOC, PATH_REPO_DOC_CONFIG, PATH_REPO_DOC_PUBLIC,
+  PATH_DIST,
+  PATH_TMP,
+  PATH_REPO_DOC,
+  PATH_REPO_DOC_CONFIG,
+  PATH_REPO_DOC_PUBLIC,
   DOC_REPO, USE_CNPM
 } = require('./config')
 
@@ -152,7 +156,7 @@ async function build() {
 
   if (!process.env.GITHUB_ACTIONS) {
     // FIXME echarts-doc has compatibility issues with node >= 16
-    if (parseInt(process.version.split('.')[0]) > 16) {
+    if (+process.version.slice(1).split('.')[0] > 16) {
       process.env.NODE_OPTIONS = '--openssl-legacy-provider'
     }
   }
@@ -199,13 +203,15 @@ async function build() {
     await buildPromise
 
     const publicDist = path.resolve(PATH_DIST, './public')
-    // copy to dist
-    fs.copySync(PATH_REPO_DOC_PUBLIC, publicDist)
-    // copy index redirect
-    fs.copySync(
-      path.resolve(__dirname, 'config/index-redirect.html'),
-      path.resolve(PATH_DIST, 'index.html')
-    )
+    await Promise.all([
+      // copy to dist
+      fs.copy(PATH_REPO_DOC_PUBLIC, publicDist),
+      // copy index redirect
+      fs.copy(
+        path.resolve(__dirname, 'config/index-redirect.html'),
+        path.resolve(PATH_DIST, 'index.html')
+      )
+    ])
 
     const options = {
       cwd: publicDist,
@@ -246,7 +252,7 @@ function cleanup() {
     // remove tmp files
     fs.removeSync(PATH_TMP)
   } catch (e) {
-    console.error(chalk.red('failed to clean up'), e)
+    console.error(chalk.red('failed to clean up'))
     throw e
   }
 }

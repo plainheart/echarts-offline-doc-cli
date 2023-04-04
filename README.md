@@ -5,7 +5,7 @@ A CLI tool for offline documentation of Apache ECharts.
 
 ```sh
 # clone the repo
-git clone https://github.com/plainheart/echarts-offline-doc-cli.git
+git clone https://github.com/plainheart/echarts-offline-doc-cli.git --depth=1
 
 # install dependencies
 npm i
@@ -14,7 +14,7 @@ npm i
 npm run build
 
 # If it's slow to clone the echarts-doc repo or install dependencies
-# you can specify a proxy url or use `cnpm`
+# you can specify a proxy URL
 npm run build -- --proxy=https://ghproxy.com/https://github.com/apache/echarts-doc.git
 
 # If it's slow to install dependencies
