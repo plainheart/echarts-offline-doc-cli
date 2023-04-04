@@ -1,12 +1,13 @@
 {
   "name": "echarts-offline-doc-cli",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "description": "A CLI tool for offline documentation of Apache ECharts.",
   "main": "index.js",
   "scripts": {
-    "build": "node ./bin/echarts-offline-doc.js",
-    "start": "npx opener dist/index.html",
-    "start:server": "npx http-server ./dist -o -c-1 --cors -g"
+    "build": "node ./bin/echarts-offline-doc.js -b",
+    "start": "npm run serve",
+    "serve": "npx http-server ./dist -o -c-1 --cors -g",
+    "local": "npx opener dist/index.html"
   },
   "bin": {
     "echarts-offline-doc": "./bin/echarts-offline-doc.js"
@@ -15,11 +16,11 @@
     "echarts",
     "echarts-doc",
     "echarts-cli",
-    "offline"
+    "offline-doc"
   ],
   "author": "plainheart <yhen@all-my-life.cn>",
   "license": "MIT",
-  "devDependencies": {
+  "dependencies": {
     "chalk": "^4.1.2",
     "commander": "^10.0.0",
     "cross-spawn": "^7.0.3",
@@ -27,5 +28,19 @@
     "fs-extra": "^11.1.1",
     "globby": "^11.1.0",
     "spinnies": "^0.5.1"
-  }
+  },
+  "files": [
+    "bin",
+    "build",
+    "config",
+    "index.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/plainheart/echarts-offline-doc-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/plainheart/echarts-offline-doc-cli/issues"
+  },
+  "homepage": "https://github.com/plainheart/echarts-offline-doc-cli"
 }
