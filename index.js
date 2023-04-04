@@ -60,40 +60,37 @@ async function cloneDocRepo() {
       }
     })
 
-    cloneProcess.on('close', (code, signal) => {
-      resolve(code === 0)
+    cloneProcess.on('close', (code) => {
+      code
+        ? reject('failed to clone doc repo with code ' + code)
+        : resolve()
     })
 
     cloneProcess.on('error', reject)
   })
 
-  let successful, err
+  try {
+    await clonePromise
 
-	try {
-    successful = await clonePromise
-	} catch (e) {
-		err = e
-	}
+    spinners.update(SPINNER_CHILD, {
+      text: '',
+      status: 'stopped'
+    })
 
-  spinners.update(SPINNER_CHILD, {
-    text: '',
-    status: 'stopped'
-  })
-
-  if (successful) {
     // remove .git
     fs.removeSync(path.resolve(PATH_REPO_DOC, '.git'))
 
     spinners.succeed(SPINNER_MAIN, {
       text: 'Clone doc repo, done.'
     })
-  } else {
+  }
+  catch (e) {
     spinners.fail(SPINNER_MAIN, {
       color: 'red'
     })
-    if (err) throw err
-  }
 
+    throw e
+  }
 }
 
 async function install() {
@@ -113,25 +110,22 @@ async function install() {
       }
     )
 
-    installProcess.on('close', (code, signal) => {
-      resolve(code === 0)
+    installProcess.on('close', (code) => {
+      code
+        ? reject('failed to install dependencies with code ' + code)
+        : resolve()
     })
 
     installProcess.on('error', reject)
   })
 
   try {
-    if (await installPromise) {
-      spinners.succeed(SPINNER_MAIN, {
-        text: 'Install dependencies, done.'
-      })
-      console.log()
-    }
-    else {
-      spinners.fail(SPINNER_MAIN, {
-        color: 'red'
-      })
-    }
+    await installPromise
+
+    spinners.succeed(SPINNER_MAIN, {
+      text: 'Install dependencies, done.'
+    })
+    console.log()
   }
   catch (e) {
     spinners.fail(SPINNER_MAIN, {
@@ -157,8 +151,10 @@ async function build() {
   )
 
   if (!process.env.GITHUB_ACTIONS) {
-    // compatible with node v18
-    process.env.NODE_OPTIONS = '--openssl-legacy-provider'
+    // FIXME echarts-doc has compatibility issues with node >= 16
+    if (parseInt(process.version.split('.')[0]) > 16) {
+      process.env.NODE_OPTIONS = '--openssl-legacy-provider'
+    }
   }
 
   const buildPromise = new Promise((resolve, reject) => {
@@ -172,7 +168,7 @@ async function build() {
       }
     )
 
-    buildSiteProcess.on('close', (code, signal) => {
+    buildSiteProcess.on('close', (code) => {
       if (code === 0) {
         buildProcess = spawn(
           'node', ['build.js', '--env', 'local'],
@@ -183,14 +179,16 @@ async function build() {
             detached: false
           }
         )
-        buildProcess.on('close', (code, signal) => {
-          resolve(code === 0)
+        buildProcess.on('close', (code) => {
+          code
+            ? reject('failed to build with code ' + code)
+            : resolve()
         })
 
         buildProcess.on('error', reject)
       }
       else {
-        reject(false)
+        reject('failed to build with code ' + code)
       }
     })
 
@@ -198,44 +196,39 @@ async function build() {
   })
 
   try {
-    if (await buildPromise) {
-      const publicDist = path.resolve(PATH_DIST, './public')
-      // copy to dist
-      fs.copySync(PATH_REPO_DOC_PUBLIC, publicDist)
-      // copy index redirect
-      fs.copySync(
-        path.resolve(__dirname, 'config/index-redirect.html'),
-        path.resolve(PATH_DIST, 'index.html')
-      )
+    await buildPromise
 
-      const options = {
-        cwd: publicDist,
-        absolute: true,
-        onlyFiles: true
-      }
+    const publicDist = path.resolve(PATH_DIST, './public')
+    // copy to dist
+    fs.copySync(PATH_REPO_DOC_PUBLIC, publicDist)
+    // copy index redirect
+    fs.copySync(
+      path.resolve(__dirname, 'config/index-redirect.html'),
+      path.resolve(PATH_DIST, 'index.html')
+    )
 
-      const deleteFiles = await globby(['**/*-content.html'], options)
-      deleteFiles.forEach(file => fs.removeSync(file))
-
-      const viewOnlineJS = require('./config/view-online')
-      // inject view-online script
-      const htmls = await globby(['**/*.html'], options)
-      htmls.forEach(html => {
-        let content = fs.readFileSync(html, { encoding: 'utf8' })
-        content = content.replace('<\/body>', viewOnlineJS(html.indexOf('/zh/') !== -1 ? 'zh' : 'en') + '</body>')
-        fs.writeFileSync(html, content, { encoding: 'utf8' })
-      })
-
-      spinners.succeed(SPINNER_MAIN, {
-        text: 'Build, done.'
-      })
-      console.log()
+    const options = {
+      cwd: publicDist,
+      absolute: true,
+      onlyFiles: true
     }
-    else {
-      spinners.fail(SPINNER_MAIN, {
-        color: 'red'
-      })
-    }
+
+    const deleteFiles = await globby(['**/*-content.html'], options)
+    deleteFiles.forEach(file => fs.removeSync(file))
+
+    const viewOnlineJS = require('./config/view-online')
+    // inject view-online script
+    const htmls = await globby(['**/*.html'], options)
+    htmls.forEach(html => {
+      let content = fs.readFileSync(html, { encoding: 'utf8' })
+      content = content.replace('<\/body>', viewOnlineJS(html.indexOf('/zh/') !== -1 ? 'zh' : 'en') + '</body>')
+      fs.writeFileSync(html, content, { encoding: 'utf8' })
+    })
+
+    spinners.succeed(SPINNER_MAIN, {
+      text: 'Build, done.'
+    })
+    console.log()
   }
   catch (e) {
     spinners.fail(SPINNER_MAIN, {

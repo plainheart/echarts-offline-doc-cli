@@ -2,7 +2,6 @@ const path = require('node:path')
 const os = require('node:os')
 
 const DOC_REPO = 'https://github.com/apache/echarts-doc.git'
-const DOC_REPO_MIRROR = 'https://hub.fgit.gq/apache/echarts-doc.git'
 
 const PATH_DIST = path.resolve(__dirname, '../dist')
 const PATH_TMP = path.resolve(os.tmpdir(), 'echarts-offline-doc-tmp')
@@ -16,7 +15,6 @@ const PATH_REPO_DOC_ASSETS = path.resolve(PATH_REPO_DOC_PUBLIC, './assets')
 
 module.exports = {
   DOC_REPO,
-  DOC_REPO_MIRROR,
   USE_CNPM: false,
 
   PATH_DIST,
