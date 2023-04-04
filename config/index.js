@@ -1,7 +1,7 @@
 const path = require('node:path')
 const os = require('node:os')
 
-const DOC_REPO = 'https://github.com/apache/echarts-doc.git'
+const DOC_REPO = 'https://github.com/apache/echarts-doc'
 
 const PATH_DIST = path.resolve(__dirname, '../dist')
 const PATH_TMP = path.resolve(os.tmpdir(), 'echarts-offline-doc-tmp')

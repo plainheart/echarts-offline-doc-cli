@@ -15,7 +15,7 @@ npm run build
 
 # If it's slow to clone the echarts-doc repo or install dependencies
 # you can specify a proxy URL
-npm run build -- --proxy=https://ghproxy.com/https://github.com/apache/echarts-doc.git
+npm run build -- --proxy=https://hub.fgit.gq/apache/echarts-doc
 
 # If it's slow to install dependencies
 # you can optionally use `cnpm`

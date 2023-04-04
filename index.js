@@ -3,6 +3,7 @@ const spawn = require('cross-spawn')
 const fs = require('fs-extra')
 const chalk = require('chalk')
 const globby = require('globby')
+const download = require('download')
 const Spinnies = require('spinnies')
 
 const {
@@ -30,63 +31,45 @@ const spinners = new Spinnies({
 })
 
 const SPINNER_MAIN = 'spinner-main'
-const SPINNER_CHILD = 'spinner-child'
 
 /**
  * To clone the documentation repository
  */
 async function cloneDocRepo() {
   spinners.add(SPINNER_MAIN, { color: 'yellow' })
-  spinners.add(SPINNER_CHILD, { color: 'white' })
 
   spinners.update(SPINNER_MAIN, {
     text: 'Cloning doc repo from ' + DOC_REPO + '...'
   })
 
-  const clonePromise = new Promise((resolve, reject) => {
-    cloneProcess = spawn(
-      'git',
-      ['clone', '--depth', 1, '--progress', DOC_REPO, '-b', 'master', PATH_REPO_DOC],
-      {
-        windowsHide: true,
-        detached: false
-      }
-    )
-
-    cloneProcess.stderr.on('data', data => {
-      data = String(data)
-      if (data.startsWith('fatal: ')) {
-        reject(data)
-      } else {
-        spinners.update(SPINNER_CHILD, {
-          text: data
-        })
-      }
-    })
-
-    cloneProcess.on('close', (code) => {
-      code
-        ? reject('failed to clone doc repo with code ' + code)
-        : resolve()
-    })
-
-    cloneProcess.on('error', reject)
-  })
-
+  const clonePromise = download(
+    DOC_REPO + '/archive/master.tar.gz',
+    PATH_REPO_DOC,
+    { extract: true }
+  )
   try {
     await clonePromise
 
-    spinners.update(SPINNER_CHILD, {
-      text: '',
-      status: 'stopped'
+    const decompressedDir = path.resolve(PATH_REPO_DOC, 'echarts-doc-master')
+    const files = await globby('**/*', {
+      cwd: decompressedDir,
+      // dot: true
     })
-
-    // remove .git
-    fs.removeSync(path.resolve(PATH_REPO_DOC, '.git'))
+    await Promise.all(
+      files.map(file =>
+        fs.move(
+          path.join(decompressedDir, file),
+          path.join(PATH_REPO_DOC, file),
+          { overwrite: true }
+        )
+      )
+    )
+    await fs.remove(decompressedDir)
 
     spinners.succeed(SPINNER_MAIN, {
       text: 'Clone doc repo, done.'
     })
+    console.log()
   }
   catch (e) {
     spinners.fail(SPINNER_MAIN, {
