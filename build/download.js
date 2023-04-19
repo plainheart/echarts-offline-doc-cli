@@ -11,7 +11,9 @@ const REG_URL_CSS = /url\s*\((\s*[A-Za-z0-9\-\_\.\/\:]+\s*)\)\s*;?/gi
 const {
   PATH_REPO_DOC_ASSETS,
   PATH_REPO_DOC_PUBLIC,
-  PATH_REPO_DOC_SRC
+  PATH_REPO_DOC_SRC,
+  URL_ECHARTS_LOGO,
+  URL_ECHARTS_FAVICON
 } = require('../config')
 
 function addProtocol(url) {
@@ -28,7 +30,7 @@ async function findDownloadList() {
     absolute: true
   })
 
-  const downloadMap = new Set()
+  const downloadSet = new Set()
   const reg = /(https?:)?\/\/.*\.(css|js)/g
   htmlPages.forEach(page => {
     const html = fs.readFileSync(page, {
@@ -36,7 +38,7 @@ async function findDownloadList() {
     })
     const matches = html.matchAll(reg)
     for (const match of matches) {
-      downloadMap.add(match[0])
+      downloadSet.add(match[0])
     }
   })
 
@@ -48,14 +50,19 @@ async function findDownloadList() {
   )
   const matches = configJS.matchAll(reg)
   for (const match of matches) {
-    downloadMap.add(match[0])
+    downloadSet.add(match[0])
   }
 
-  return Array.from(downloadMap)
+  return Array.from(downloadSet)
 }
 
 async function downloadAll() {
   const downloadList = await findDownloadList()
+
+  downloadList.push(
+    URL_ECHARTS_LOGO,
+    URL_ECHARTS_FAVICON
+  )
 
   const fileMappings = {}
 

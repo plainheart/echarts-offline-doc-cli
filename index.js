@@ -15,8 +15,6 @@ const {
   DOC_REPO, USE_CNPM
 } = require('./config')
 
-// the process to clone doc repo
-let cloneProcess
 // the process to install dependencies
 let installProcess
 // the process to build site
