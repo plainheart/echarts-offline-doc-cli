@@ -11,6 +11,7 @@ program
   .version(version, '-v, --version')
   .usage('[options]')
   .option('-b, --build', 'build/rebuild the offline documentation')
+  // .option('-t, --target', 'target directory to save the files of the offline documentation')
   .option('-p, --proxy [url]', 'URL of the proxy repo to be used when building the offline documentation')
   .option('-c, --cnpm', 'whether to use `cnpm` to install dependencies when building the offline documentation')
   .option('-s, --serve', 'start an HTTP server and open the default browser to view the documentation')
@@ -25,6 +26,9 @@ if (options.build) {
   }
 
   config.USE_CNPM = options.cnpm
+
+  // TODO
+  // if (options.target) {}
 
   require('..')()
 }

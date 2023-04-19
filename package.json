@@ -1,6 +1,6 @@
 {
   "name": "echarts-offline-doc-cli",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "A CLI tool for offline documentation of Apache ECharts.",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,7 @@
   "license": "MIT",
   "dependencies": {
     "chalk": "^4.1.2",
-    "commander": "^10.0.0",
+    "commander": "^10.0.1",
     "cross-spawn": "^7.0.3",
     "download": "^8.0.0",
     "fs-extra": "^11.1.1",
