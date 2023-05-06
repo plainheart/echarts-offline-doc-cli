@@ -94,6 +94,10 @@ npm run serve
 npm run local
 ```
 
+## Download From GitHub Pages
+
+If you don't want the build step or install the npm package, you may also download the zip archive from the [**gh-pages**](https://github.com/plainheart/echarts-offline-doc-cli/archive/gh-pages.zip) branch.
+
 # License
 
 MIT &copy; 2021-2023 [plainheart](https://github.com/plainheart).
