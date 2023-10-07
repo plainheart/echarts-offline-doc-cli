@@ -27,9 +27,9 @@ echarts-offline-doc -b
 
 # If it's slow to clone the echarts-doc repo
 # you can specify a proxy URL
-echarts-offline-doc --build --proxy https://hub.fgit.ml/apache/echarts-doc
+echarts-offline-doc --build --proxy https://hub.fgit.cf/apache/echarts-doc
 # Equivalent to:
-echarts-offline-doc -b -p https://hub.fgit.ml/apache/echarts-doc
+echarts-offline-doc -b -p https://hub.fgit.cf/apache/echarts-doc
 
 # If it's slow to install dependencies
 # you can optionally use `cnpm`
@@ -75,9 +75,9 @@ npm run build
 
 # If it's slow to clone the echarts-doc repo
 # you can specify a proxy URL
-npm run build -- --proxy https://hub.fgit.ml/apache/echarts-doc
+npm run build -- --proxy https://hub.fgit.cf/apache/echarts-doc
 # Equivalent to:
-npm run build -- -p https://hub.fgit.ml/apache/echarts-doc
+npm run build -- -p https://hub.fgit.cf/apache/echarts-doc
 
 # If it's slow to install dependencies
 # you can optionally use `cnpm`
