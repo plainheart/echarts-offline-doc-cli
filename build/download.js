@@ -6,8 +6,6 @@ const globby = require('globby')
 
 const md5 = str => crypto.createHash('md5').update(str).digest('hex')
 
-const REG_URL_CSS = /url\s*\((\s*[A-Za-z0-9\-\_\.\/\:]+\s*)\)\s*;?/gi
-
 const {
   PATH_REPO_DOC_ASSETS,
   PATH_REPO_DOC_PUBLIC,
@@ -24,36 +22,42 @@ function addProtocol(url) {
 }
 
 async function findDownloadList() {
-  const htmlPages = await globby(['**/*.html'], {
+  const globbyOptions = {
     cwd: PATH_REPO_DOC_PUBLIC,
+    ignore: '**/documents/**',
     onlyFiles: true,
     absolute: true
-  })
+  }
+
+  const htmlPages = await globby('**/*.html', globbyOptions)
 
   const downloadSet = new Set()
-  const reg = /(https?:)?\/\/.*\.(css|js)/g
-  htmlPages.forEach(page => {
-    const html = fs.readFileSync(page, {
-      encoding: 'utf8'
-    })
-    const matches = html.matchAll(reg)
+  const reg = /['"]{1}((?:https?:)?\/\/.*\.(?:css|js))['"]{1}/g
+
+  for (const html of htmlPages) {
+    const content = fs.readFileSync(html, 'utf-8')
+    const matches = content.matchAll(reg)
     for (const match of matches) {
-      downloadSet.add(match[0])
+      downloadSet.add(match[1])
     }
+  }
+
+  const files = await globby('**/*.{js,vue}', {
+    ...globbyOptions,
+    cwd: PATH_REPO_DOC_SRC
   })
-
-  // TODO url in local CSS files
-
-  const configJS = fs.readFileSync(
-    path.resolve(PATH_REPO_DOC_SRC, './config.js'),
-    { encoding: 'utf8' }
-  )
-  const matches = configJS.matchAll(reg)
-  for (const match of matches) {
-    downloadSet.add(match[0])
+  for (const file of files) {
+    const content = fs.readFileSync(file, 'utf-8')
+    const matches = content.matchAll(reg)
+    for (const match of matches) {
+      downloadSet.add(match[1])
+    }
+    // TODO url in local CSS files
   }
 
   return Array.from(downloadSet)
+    // PENDING
+    .filter(url => !url.includes('.jsdelivr.net'))
 }
 
 async function downloadAll() {
@@ -65,6 +69,8 @@ async function downloadAll() {
   )
 
   const fileMappings = {}
+
+  const REG_URL_CSS = /url\s*\(['"]?((?:https?:\/\/)?[^'"]+)['"]?\)/g
 
   async function makeDownloadPromise(resourceUrl) {
     const idx = resourceUrl.lastIndexOf('.')
@@ -79,11 +85,15 @@ async function downloadAll() {
 
     // PENDING
     if (ext.endsWith('css')) {
-      let cssContent = fs.readFileSync(localPath, { encoding: 'utf8' })
+      let cssContent = fs.readFileSync(localPath, 'utf8')
       const root = downloadUrl.slice(0, downloadUrl.lastIndexOf('/') + 1)
       const matches = cssContent.matchAll(REG_URL_CSS)
       for (const match of matches) {
         let t = match[1]
+        if (t.startsWith('data:')) {
+          continue
+        }
+
         const idx = t.lastIndexOf('.')
         const queryMarkIdx = t.lastIndexOf('?')
         const ext = t.slice(idx, queryMarkIdx === -1 ? void 0 : queryMarkIdx)
@@ -96,7 +106,7 @@ async function downloadAll() {
           await download(t)
         )
         cssContent = cssContent.replace(match[1], filename)
-        fs.writeFileSync(localPath, cssContent, { encoding: 'utf8' })
+        fs.writeFileSync(localPath, cssContent, 'utf8')
       }
     }
 

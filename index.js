@@ -3,7 +3,6 @@ const spawn = require('cross-spawn')
 const fs = require('fs-extra')
 const chalk = require('chalk')
 const globby = require('globby')
-const download = require('download')
 const Spinnies = require('spinnies')
 
 const {
@@ -15,14 +14,6 @@ const {
   DOC_REPO, USE_CNPM
 } = require('./config')
 
-// the process to install dependencies
-let installProcess
-// the process to build site
-let buildSiteProcess
-// the process to build doc
-let buildProcess
-
-// spinners
 const spinners = new Spinnies({
   succeedPrefix : '✔️',
   failPrefix: '❌'
@@ -31,41 +22,94 @@ const spinners = new Spinnies({
 const SPINNER_MAIN = 'spinner-main'
 
 /**
- * To clone the documentation repository
+ * @param {string} command
+ * @param {string[]} args
+ * @param {string} cwd
+ * @param {string} processName
+ * @returns {Promise<void>}
  */
-async function cloneDocRepo() {
-  spinners.add(SPINNER_MAIN, { color: 'yellow' })
+function createSpawn(command, args, cwd, processName) {
+  return new Promise((resolve, reject) => {
+    spawn(
+      command, args,
+      {
+        cwd,
+        stdio: 'ignore',
+        windowsHide: true,
+        detached: false
+      }
+    )
+    .on('error', reject)
+    .on('close', (code) => {
+      code
+        ? reject(`failed to ${processName} with code: ${code}`)
+        : resolve()
+    })
+  })
+}
 
-  spinners.update(SPINNER_MAIN, {
-    text: 'Cloning doc repo from ' + DOC_REPO + '...'
+async function checkoutDocRepo() {
+  spinners.add(SPINNER_MAIN, {
+    color: 'yellow',
+    text: 'Checking out doc repo from ' + DOC_REPO + '...'
   })
 
-  const clonePromise = download(
-    DOC_REPO + '/archive/master.tar.gz',
-    PATH_REPO_DOC,
-    { extract: true }
-  )
-  try {
-    await clonePromise
+  const cwd = PATH_REPO_DOC
+  const processName = 'check out doc repo'
 
-    const decompressedDir = path.resolve(PATH_REPO_DOC, 'echarts-doc-master')
-    const files = await globby('**/*', {
-      cwd: decompressedDir,
-      // dot: true
-    })
-    await Promise.all(
-      files.map(file =>
-        fs.move(
-          path.join(decompressedDir, file),
-          path.join(PATH_REPO_DOC, file),
-          { overwrite: true }
-        )
-      )
+  try {
+    await fs.ensureDir(cwd)
+
+    await createSpawn('git', ['init'], cwd, processName)
+
+    await createSpawn(
+      'git', ['remote', 'add', 'origin', DOC_REPO],
+      cwd,
+      processName
     )
-    await fs.remove(decompressedDir)
+
+    await createSpawn(
+      'git', ['config', 'core.sparseCheckout', 'true'],
+      cwd,
+      processName
+    )
+
+    const checkoutList = [
+      '/zh/',
+      '/src/',
+      '/public/lib/',
+      '/public/zh/',
+      '/config/',
+      '/dep/',
+      '/build/',
+      '/tool/',
+      // FIXME has unused large files
+      '/asset/',
+      '/package.json',
+      '/package-lock.json',
+      '/build.js'
+    ]
+
+    await fs.writeFile(
+      path.resolve(cwd, '.git/info/sparse-checkout'),
+      checkoutList.join('\n'),
+      'utf-8'
+    )
+
+    await createSpawn(
+      'git', ['fetch', '--depth=1', '--filter', 'blob:none'],
+      cwd,
+      processName
+    )
+
+    await createSpawn(
+      'git', ['pull', '--depth=1', 'origin', 'master'],
+      cwd,
+      processName
+    )
 
     spinners.succeed(SPINNER_MAIN, {
-      text: 'Clone doc repo, done.'
+      text: 'Check out doc repo, done.'
     })
     console.log()
   }
@@ -74,6 +118,7 @@ async function cloneDocRepo() {
       color: 'red'
     })
 
+    // TODO wrap error
     throw e
   }
 }
@@ -84,28 +129,14 @@ async function install() {
     text: 'Installing dependencies...'
   })
 
-  const installPromise = new Promise((resolve, reject) => {
-    installProcess = spawn(
-      USE_CNPM ? 'cnpm' : 'npm', ['ci'],
-      {
-        cwd: PATH_REPO_DOC,
-        stdio: 'ignore',
-        windowsHide: true,
-        detached: false
-      }
-    )
-
-    installProcess.on('close', (code) => {
-      code
-        ? reject('failed to install dependencies with code ' + code)
-        : resolve()
-    })
-
-    installProcess.on('error', reject)
-  })
+  const processName = 'install dependencies'
 
   try {
-    await installPromise
+    await createSpawn(
+      USE_CNPM ? 'cnpm' : 'npm', ['ci'],
+      PATH_REPO_DOC,
+      processName
+    )
 
     spinners.succeed(SPINNER_MAIN, {
       text: 'Install dependencies, done.'
@@ -116,6 +147,8 @@ async function install() {
     spinners.fail(SPINNER_MAIN, {
       color: 'red'
     })
+
+    // TODO wrap error
     throw e
   }
 }
@@ -142,46 +175,20 @@ async function build() {
     }
   }
 
-  const buildPromise = new Promise((resolve, reject) => {
-    buildSiteProcess = spawn(
-      'npm', ['run', 'build:site'],
-      {
-        cwd: PATH_REPO_DOC,
-        stdio: 'ignore',
-        windowsHide: true,
-        detached: false
-      }
-    )
-
-    buildSiteProcess.on('close', (code) => {
-      if (code === 0) {
-        buildProcess = spawn(
-          'node', ['build.js', '--env', 'local'],
-          {
-            cwd: PATH_REPO_DOC,
-            stdio: 'ignore',
-            windowsHide: true,
-            detached: false
-          }
-        )
-        buildProcess.on('close', (code) => {
-          code
-            ? reject('failed to build with code ' + code)
-            : resolve()
-        })
-
-        buildProcess.on('error', reject)
-      }
-      else {
-        reject('failed to build with code ' + code)
-      }
-    })
-
-    buildSiteProcess.on('error', reject)
-  })
+  const processName = 'build'
 
   try {
-    await buildPromise
+    await createSpawn(
+      'npm', ['run', 'build:site'],
+      PATH_REPO_DOC,
+      processName
+    )
+
+    await createSpawn(
+      'node', ['build.js', '--env', 'local'],
+      PATH_REPO_DOC,
+      processName
+    )
 
     const publicDist = path.resolve(PATH_DIST, './public')
     await Promise.all([
@@ -204,12 +211,15 @@ async function build() {
     deleteFiles.forEach(file => fs.removeSync(file))
 
     const viewOnlineJS = require('./config/view-online')
-    // inject view-online script
     const htmls = await globby(['**/*.html'], options)
     htmls.forEach(html => {
-      let content = fs.readFileSync(html, { encoding: 'utf8' })
-      content = content.replace('<\/body>', viewOnlineJS(html.indexOf('/zh/') !== -1 ? 'zh' : 'en') + '</body>')
-      fs.writeFileSync(html, content, { encoding: 'utf8' })
+      let content = fs.readFileSync(html, 'utf8')
+      content = content
+        // hide lang switcher
+        .replace('<head>', `<head><style>#header .lang{display:none!important}</style>`)
+        // inject view online button
+        .replace('<\/body>', viewOnlineJS() + '</body>')
+      fs.writeFileSync(html, content, 'utf8')
     })
 
     spinners.succeed(SPINNER_MAIN, {
@@ -228,20 +238,30 @@ async function build() {
 /**
  * clean up temporary files
  */
-function cleanup() {
+async function cleanup(suppressError) {
+  spinners.add(SPINNER_MAIN, {
+    color: 'yellow',
+    text: 'Cleaning up temp files...'
+  })
+
   try {
     // remove tmp files
-    fs.removeSync(PATH_TMP)
+    await fs.remove(PATH_TMP)
+
+    spinners.succeed(SPINNER_MAIN, {
+      text: 'Clean up temp files, done.'
+    })
+    console.log()
   } catch (e) {
-    console.error(chalk.red('failed to clean up'))
-    throw e
+    spinners.fail(SPINNER_MAIN, {
+      color: 'red'
+    })
+
+    if (!suppressError) {
+      throw e
+    }
   }
 }
-
-process.on('beforeExit', code => {
-  cleanup()
-  process.exit(code)
-})
 
 process.on('uncaughtException', e => {
   console.error(chalk.red('An uncaught error occurred'))
@@ -252,10 +272,10 @@ process.on('uncaughtException', e => {
 module.exports = async function run() {
   try {
     // cleanup first
-    cleanup()
+    await cleanup()
 
-    // clone doc repo
-    await cloneDocRepo()
+    // checkout doc repo
+    await checkoutDocRepo()
 
     // install necessary dependencies
     await install()
@@ -270,9 +290,9 @@ module.exports = async function run() {
 
     // build
     await build()
-
   } catch (e) {
     console.error(chalk.red(e))
-    process.exit(-1)
+  } finally {
+    await cleanup(true)
   }
 }

@@ -4,99 +4,95 @@
 [![NPM Downloads](https://img.shields.io/npm/dm/echarts-offline-doc-cli.svg)](https://npmcharts.com/compare/echarts-offline-doc-cli?minimal=true)
 [![License](https://img.shields.io/npm/l/echarts-offline-doc-cli.svg)](https://github.com/plainheart/echarts-offline-doc-cli/blob/main/LICENSE)
 
-A CLI tool for offline documentation of Apache ECharts.
+Apache ECharts 中文离线文档生成工具
 
-[Preview on GitHub Pages](https://plainheart.github.io/echarts-offline-doc-cli)
+[GitHub Pages 预览](https://plainheart.github.io/echarts-offline-doc-cli)
 
-![Screenshot](https://user-images.githubusercontent.com/26999792/229869304-4a782121-4324-4e68-9f3d-a956d0c60ee6.png)
+![示例](https://user-images.githubusercontent.com/26999792/229869304-4a782121-4324-4e68-9f3d-a956d0c60ee6.png)
 
-# Get Started
+# 开始使用
 
-## Install Globally
+## 全局安装
 
 ```sh
 npm i echarts-offline-doc-cli -g
 ```
 
-### Build Offline Documentation
+### 生成离线文档
 
 ```sh
 echarts-offline-doc --build
-# Equivalent to:
+# 等价于：
 echarts-offline-doc -b
 
-# If it's slow to clone the echarts-doc repo
-# you can specify a proxy URL
+# 如果拉取代码速度较慢，可以指定一个快速的代理镜像地址
 echarts-offline-doc --build --proxy https://hub.fgit.cf/apache/echarts-doc
-# Equivalent to:
+# 等价于：
 echarts-offline-doc -b -p https://hub.fgit.cf/apache/echarts-doc
 
-# If it's slow to install dependencies
-# you can optionally use `cnpm`
+# 如果依赖安装速度较慢，可以考虑使用 cnpm
 echarts-offline-doc --build --cnpm
-# Equivalent to:
+# 等价于：
 echarts-offline-doc -b -c
 
-# View Help
+# 查看帮助信息
 echarts-offline-doc --help
-# Equivalent to:
+# 等价于：
 echarts-offline-doc -h
 ```
 
-### View Offline Documentation With an HTTP Server
+### 使用 HTTP Server 查看离线文档
 
 ```sh
 echarts-offline-doc
-# Equivalent to:
+# 等价于：
 echarts-offline-doc --serve
-# Equivalent to:
+# 等价于：
 echarts-offline-doc -s
 ```
 
-### View Offline Documentation Locally
+### 本地查看离线文档
 
 ```sh
 echarts-offline-doc --local
-# Equivalent to:
+# 等价于：
 echarts-offline-doc -l
 ```
 
-## Build From Source
+## 从源码构建
 
 ```sh
-# clone the repo
+# 拉取本项目代码仓库
 git clone https://github.com/plainheart/echarts-offline-doc-cli --depth=1
 
-# install dependencies
+# 安装依赖
 npm i
 
-# build offline documentation
+# 构建离线文档
 npm run build
 
-# If it's slow to clone the echarts-doc repo
-# you can specify a proxy URL
-npm run build -- --proxy https://hub.fgit.cf/apache/echarts-doc
-# Equivalent to:
-npm run build -- -p https://hub.fgit.cf/apache/echarts-doc
+# 如果拉取代码速度较慢，可以指定一个快速的代理镜像地址
+npm run build -- -- --proxy https://hub.fgit.cf/apache/echarts-doc
+# 等价于：
+npm run build -- -- -p https://hub.fgit.cf/apache/echarts-doc
 
-# If it's slow to install dependencies
-# you can optionally use `cnpm`
-npm run build -- --cnpm
-# Equivalent to:
-npm run build -- -c
+# 如果依赖安装速度较慢，可以考虑使用 cnpm
+npm run build -- -- --cnpm
+# 等价于：
+npm run build -- -- -c
 
-# start an HTTP server to view the documentation offline
+# 开启一个 HTTP Server 查看离线文档
 npm start
-# Equivalent to:
+# 等价于：
 npm run serve
 
-# or run the following command to open the static pages locally without a server
+# 也可以不用开启 HTTP Server，直接打开来查看离线文档
 npm run local
 ```
 
-## Download From GitHub Pages
+## 从 GitHub Pages 下载离线文档
 
-If you don't want the build step or install the npm package, you may also download the zip archive from the [**gh-pages**](https://github.com/plainheart/echarts-offline-doc-cli/archive/gh-pages.zip) branch.
+如果不想麻烦去安装或者手动构建，可以直接从 [**gh-pages**](https://github.com/plainheart/echarts-offline-doc-cli/archive/gh-pages.zip) 分支下载定期生自动生成和更新的 zip 压缩包，解压后打开根目录下的 `index.html` 即可。
 
 # License
 
