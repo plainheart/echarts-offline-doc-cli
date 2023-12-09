@@ -92,7 +92,7 @@ npm run local
 
 ## 从 GitHub Pages 下载离线文档
 
-如果不想麻烦去安装或者手动构建，可以直接从 [**gh-pages**](https://github.com/plainheart/echarts-offline-doc-cli/archive/gh-pages.zip) 分支下载定期生自动生成和更新的 zip 压缩包，解压后打开根目录下的 `index.html` 即可。
+如果不想麻烦去安装或者手动构建，可以直接从 [**gh-pages**](https://github.com/plainheart/echarts-offline-doc-cli/archive/gh-pages.zip) 分支下载定期自动生成和更新的 zip 压缩包，解压后打开根目录下的 `index.html` 即可。
 
 # License
 
