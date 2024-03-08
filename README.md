@@ -26,9 +26,9 @@ echarts-offline-doc --build
 echarts-offline-doc -b
 
 # 如果拉取代码速度较慢，可以指定一个快速的代理镜像地址
-echarts-offline-doc --build --proxy https://hub.fgit.cf/apache/echarts-doc
+echarts-offline-doc --build --proxy https://521github.com/apache/echarts-doc
 # 等价于：
-echarts-offline-doc -b -p https://hub.fgit.cf/apache/echarts-doc
+echarts-offline-doc -b -p https://521github.com/apache/echarts-doc
 
 # 如果依赖安装速度较慢，可以考虑使用 cnpm
 echarts-offline-doc --build --cnpm
