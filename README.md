@@ -72,9 +72,9 @@ npm i
 npm run build
 
 # 如果拉取代码速度较慢，可以指定一个快速的代理镜像地址
-npm run build -- -- --proxy https://hub.fgit.cf/apache/echarts-doc
+npm run build -- -- --proxy https://521github.com/apache/echarts-doc
 # 等价于：
-npm run build -- -- -p https://hub.fgit.cf/apache/echarts-doc
+npm run build -- -- -p https://521github.com/apache/echarts-doc
 
 # 如果依赖安装速度较慢，可以考虑使用 cnpm
 npm run build -- -- --cnpm
