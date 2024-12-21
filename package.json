@@ -6,8 +6,8 @@
   "scripts": {
     "build": "node ./bin/echarts-offline-doc.js -b",
     "start": "npm run serve",
-    "serve": "npx http-server ./dist -o -c-1 --cors -g",
-    "local": "npx opener dist/index.html"
+    "serve": "npx -y http-server ./dist -o -c-1 --cors -g",
+    "local": "npx -y opener dist/index.html"
   },
   "bin": {
     "echarts-offline-doc": "./bin/echarts-offline-doc.js"
@@ -23,9 +23,9 @@
   "dependencies": {
     "chalk": "^4.1.2",
     "commander": "^10.0.1",
-    "cross-spawn": "^7.0.3",
+    "cross-spawn": "^7.0.6",
     "download": "^8.0.0",
-    "fs-extra": "^11.1.1",
+    "fs-extra": "^11.2.0",
     "globby": "^11.1.0",
     "spinnies": "^0.5.1"
   },
