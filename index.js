@@ -5,6 +5,8 @@ const chalk = require('chalk')
 const globby = require('globby')
 const Spinnies = require('spinnies')
 
+const isVerbose = process.argv.includes('--verbose')
+
 const {
   PATH_DIST,
   PATH_TMP,
@@ -34,7 +36,7 @@ function createSpawn(command, args, cwd, processName) {
       command, args,
       {
         cwd,
-        stdio: 'ignore',
+        stdio: isVerbose ? 'inherit' : 'ignore',
         windowsHide: true,
         detached: false
       }
@@ -161,7 +163,7 @@ async function build() {
 
   await fs.remove(PATH_DIST)
 
-  const configFileName = 'env.local.js'
+  const configFileName = 'env.asf-override.js'
   // copy config
   await fs.copy(
     path.resolve(__dirname, `./config/${configFileName}`),
@@ -185,7 +187,7 @@ async function build() {
     )
 
     await createSpawn(
-      'node', ['build.js', '--env', 'local'],
+      'node', ['build.js', '--env', 'asf'],
       PATH_REPO_DOC,
       processName
     )
@@ -264,9 +266,13 @@ async function cleanup(suppressError) {
 }
 
 process.on('uncaughtException', e => {
-  console.error(chalk.red('An uncaught error occurred'))
-  console.error(chalk.red(e))
+  console.error(chalk.red('An uncaught error occurred:\n' + e.stack))
   process.exit(-2)
+})
+
+process.on('unhandledRejection', (reason) => {
+  console.error(chalk.red('An unhandled promise rejection occurred:\n' + (reason.stack || reason)))
+  process.exit(-3)
 })
 
 module.exports = async function run() {
@@ -291,8 +297,8 @@ module.exports = async function run() {
     // build
     await build()
   } catch (e) {
-    console.error(chalk.red(e))
+    console.error(chalk.red(e.stack))
   } finally {
-    await cleanup(true)
+    await cleanup(!isVerbose)
   }
 }

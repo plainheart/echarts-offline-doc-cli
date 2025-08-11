@@ -17,6 +17,7 @@ program
   .option('-c, --cnpm', '使用 `cnpm` 安装依赖')
   .option('-s, --serve', '开启一个 HTTP Server 查看离线文档')
   .option('-l, --local', '本地查看离线文档')
+  .option('--verbose', '输出调试日志')
   .parse(process.argv)
 
 const options = program.opts()

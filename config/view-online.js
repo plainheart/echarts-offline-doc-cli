@@ -1,4 +1,4 @@
-const { officialWebsitePath } = require('./env.local')
+const { officialWebsitePath } = require('./env.asf-override')
 
 module.exports = function() {
   return /* html */`

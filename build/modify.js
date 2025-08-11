@@ -6,9 +6,9 @@ const {
   PATH_REPO_DOC_ASSETS,
   PATH_REPO_DOC_PUBLIC,
   PATH_REPO_DOC_SRC,
+  PATH_REPO_DOC_BUILD,
   PATH_REPO_DOC_BUILD_ENTRY,
   URL_ECHARTS_FAVICON,
-  PATH_REPO_DOC
 } = require('../config')
 
 function getRelativePath(assetPath) {
@@ -42,7 +42,11 @@ async function modify(assetsMapping) {
   })
 
   // rewrite the URLs in source files
-  const relativePathRoot = getRelativePath(require(PATH_REPO_DOC_BUILD_ENTRY).output.path) + '/'
+  let webpackConfig = require(PATH_REPO_DOC_BUILD_ENTRY)
+  if (typeof webpackConfig === 'function') {
+    webpackConfig = await webpackConfig('asf', 'production')
+  }
+  const relativePathRoot = getRelativePath(webpackConfig.output.path) + '/'
   const files = await globby('**/*.{js,vue}', {
     cwd: PATH_REPO_DOC_SRC,
     ignore: '**/documents/**',
@@ -58,7 +62,7 @@ async function modify(assetsMapping) {
     fs.writeFileSync(file, content, 'utf8')
   }
 
-  const buildScriptPath = path.resolve(PATH_REPO_DOC, 'build.js')
+  const buildScriptPath = path.resolve(PATH_REPO_DOC_BUILD, 'build-doc.js')
   const buildScriptContent = fs.readFileSync(buildScriptPath, 'utf8')
   fs.writeFileSync(
     buildScriptPath,
