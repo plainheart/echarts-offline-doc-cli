@@ -96,4 +96,4 @@ npm run local
 
 # License
 
-MIT &copy; 2021-2024 [plainheart](https://github.com/plainheart).
+MIT &copy; 2021-2025 [plainheart](https://github.com/plainheart).
