@@ -1,6 +1,6 @@
 {
   "name": "echarts-offline-doc-cli",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Apache ECharts 中文离线文档生成工具。",
   "main": "index.js",
   "scripts": {
