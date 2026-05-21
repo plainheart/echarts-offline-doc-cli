@@ -1057,6 +1057,22 @@ textBorderDashOffset: 5
 boundaryGap: ['20%', '20%']
 ```
 
+### parallelAxisDefault.containShape
+- **Type**: `boolean`
+- **Default**: `true`
+
+从 `v6.1.0` 开始支持
+
+是否在坐标轴两端增加额外的空间以阻止系列的图形超出坐标系范围。
+
+目前 `containShape` 只支持于 [柱状图（bar）](option.series-bar.md)、[象形柱状图（pictorialBar）](option.series-pictorialBar.md)、[K线图（candlestick）](option.series-candlestick.md) 和 [盒须图（boxplot）](option.series-boxplot.md)，这些图形往往不应超出边界往往。
+
+注：如果 `dataZoom` 被用于数值类的坐标轴（即 `axis.type: 'value' | 'time' | 'log'`），只在 `dataZoom` 完整窗口两端（即 `dataZoom` 断点 `0%` 和端点 `100%`）增加额外空间。如果 `dataZoom` 被用于类目坐标轴（`axis.type: 'category'`），不论什么 `dataZoom` 当前是什么范围总是增加额外的空间。
+
+也参见 [series.clip](option.series-bar.md#clip)，它可剪裁超出坐标系边界的图形。
+
+也参见 [boundaryGap](option.parallelAxis.md#boundaryGap)。这两个配置项的功能因为历史原因有所重叠。只有在 `boundaryGap: false, containShape: false` 时，类目坐标轴（`axis.type: 'category'`）中的图形才可能超出坐标轴范围。
+
 ### parallelAxisDefault.min
 - **Type**: `number|string|Function`
 
@@ -1118,6 +1134,59 @@ max: function (value) {
 ```
 
 其中 `value` 是一个包含 `min` 和 `max` 的对象，分别表示数据的最大最小值，这个函数可返回坐标轴的最大值，也可返回 `null`/`undefined` 来表示“自动计算最大值”（返回 `null`/`undefined` 从 `v4.8.0` 开始支持）。
+
+### parallelAxisDefault.dataMin
+- **Type**: `number`
+
+从 `v6.1.0` 开始支持
+
+指定数据最小值，用于扩展坐标轴范围同时保持自动刻度优化。
+
+只在数值轴、对数轴、时间轴中（[type](option.parallelAxis.md#type): 'value'、'log' 或 'time'）有效。
+
+**工作原理：**
+
+`dataMin` 的效果好似在数据中插入了一个虚拟的数据点，但这个点只参与坐标轴范围的计算，不会实际显示在图表中。
+
+*   当 `dataMin` **小于**实际数据最小值时：坐标轴会扩展以包含这个值，使用一个不大于 `dataMin` 的整齐刻度值作为坐标轴最小值
+*   当 `dataMin` **大于等于**实际数据最小值时：不产生任何影响，按原有逻辑计算
+
+**适用场景：**
+
+*   确保坐标轴包含某个参考值（如及格线、目标值等）
+*   需要为数据留出一定的视觉空间
+
+**与 [min](option.parallelAxis.md#min) 的区别：**
+
+*   `min` 会固定坐标轴最小值，禁用自动刻度优化
+*   `dataMin` 只影响坐标轴范围，仍保持自动刻度优化
+
+### parallelAxisDefault.dataMax
+- **Type**: `number`
+
+从 `v6.1.0` 开始支持
+
+指定数据最大值，用于扩展坐标轴范围同时保持自动刻度优化。
+
+只在数值轴、对数轴、时间轴中（[type](option.parallelAxis.md#type): 'value'、'log' 或 'time'）有效。
+
+**工作原理：**
+
+`dataMax` 的效果好似在数据中插入了一个虚拟的数据点，但这个点只参与坐标轴范围的计算，不会实际显示在图表中。
+
+*   当 `dataMax` **大于**实际数据最大值时：坐标轴会扩展以包含这个值，使用一个不小于 `dataMax` 的整齐刻度值作为坐标轴最大值
+*   当 `dataMax` **小于等于**实际数据最大值时：不产生任何影响，按原有逻辑计算
+
+**适用场景：**
+
+*   确保坐标轴包含目标值或上限值
+*   为数据预留视觉空间，使图表更美观
+*   使多个相似的图表保持一致的坐标轴范围
+
+**与 [max](option.parallelAxis.md#max) 的区别：**
+
+*   `max` 会固定坐标轴最大值，禁用自动刻度优化
+*   `dataMax` 只影响坐标轴范围，仍保持自动刻度优化
 
 ### parallelAxisDefault.scale
 - **Type**: `boolean`
@@ -1185,10 +1254,15 @@ max: function (value) {
 
 ### parallelAxisDefault.startValue
 - **Type**: `number`
+- **Default**: `0`
 
 从 `v5.5.1` 开始支持
 
-用于指定轴的起始值。
+`v6.1.0`前（不包含），`startValue` 也会被用于 [axis.min](option.yAxis.md#min) 若其未被指定。自从 `v6.1.0`，这两个配置项不再相关。
+
+系列图形的起始值。目前只适用于 [柱状图（bar）](option.series-bar.md) and [象形柱状图（pictorialBar）](option.series-pictorialBar.md)。
+
+注：目前不支持 `startValue` 和 [stack](option.series-bar.md#stack) 同时使用（其效果可能不符合预期）。
 
 ### parallelAxisDefault.silent
 - **Type**: `boolean`

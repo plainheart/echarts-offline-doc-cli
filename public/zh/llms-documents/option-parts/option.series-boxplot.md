@@ -26578,6 +26578,18 @@ animationDelayUpdate: function (idx) {
 
 也可以看[该示例](https://echarts.apache.org/examples/zh/editor.html?c=bar-animation-delay)
 
+## clip
+- **Type**: `boolean`
+- **Default**: `true`
+
+从 `v6.1.0` 开始支持
+
+是否基于坐标系区域对系列的图形进行剪裁。
+
+具体裁剪效果是：
+
+任一图形超出坐标系的部分会被剪裁掉。
+
 ## zlevel
 - **Type**: `number`
 - **Default**: `0`

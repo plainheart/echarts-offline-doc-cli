@@ -190,6 +190,14 @@ center: ['50%', '50%']
 
 布局时所基于的 [矩阵坐标系](option.matrix.md) 的 id。当一个 ECharts 实例中存在多个矩阵坐标系时，用其指定所使用的坐标系。
 
+## clockwise
+- **Type**: `boolean`
+- **Default**: `false`
+
+从 `v6.1.0` 开始支持
+
+是否以顺时针排布指示器轴。
+
 ## startAngle
 - **Type**: `number`
 - **Default**: `90`

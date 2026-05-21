@@ -662,6 +662,7 @@ params.value[params.dimensionNames[params.encode.y[0]]]
 
 *   如果为 `true` 或 `'radial'`，则为径向排布。（`'radial'` 字面量从 `v5.2.0` 开始支持）
 *   如果为 `'tangential'`，则为切向排布。（从 `v5.2.0` 开始支持）
+*   如果为 `'tangential-noflip'`，则为切向排布，不反转。（从 `v6.1.0` 开始支持）
 *   如果为 `number` ，旋转指定角度，从 -90 度到 90 度。正值是逆时针。
 
 ### label.textMargin
@@ -2203,6 +2204,7 @@ params.value[params.dimensionNames[params.encode.y[0]]]
 
 *   如果为 `true` 或 `'radial'`，则为径向排布。（`'radial'` 字面量从 `v5.2.0` 开始支持）
 *   如果为 `'tangential'`，则为切向排布。（从 `v5.2.0` 开始支持）
+*   如果为 `'tangential-noflip'`，则为切向排布，不反转。（从 `v6.1.0` 开始支持）
 *   如果为 `number` ，旋转指定角度，从 -90 度到 90 度。正值是逆时针。
 
 #### emphasis.label.color
@@ -3292,6 +3294,7 @@ params.value[params.dimensionNames[params.encode.y[0]]]
 
 *   如果为 `true` 或 `'radial'`，则为径向排布。（`'radial'` 字面量从 `v5.2.0` 开始支持）
 *   如果为 `'tangential'`，则为切向排布。（从 `v5.2.0` 开始支持）
+*   如果为 `'tangential-noflip'`，则为切向排布，不反转。（从 `v6.1.0` 开始支持）
 *   如果为 `number` ，旋转指定角度，从 -90 度到 90 度。正值是逆时针。
 
 #### blur.label.color
@@ -4389,6 +4392,7 @@ params.value[params.dimensionNames[params.encode.y[0]]]
 
 *   如果为 `true` 或 `'radial'`，则为径向排布。（`'radial'` 字面量从 `v5.2.0` 开始支持）
 *   如果为 `'tangential'`，则为切向排布。（从 `v5.2.0` 开始支持）
+*   如果为 `'tangential-noflip'`，则为切向排布，不反转。（从 `v6.1.0` 开始支持）
 *   如果为 `number` ，旋转指定角度，从 -90 度到 90 度。正值是逆时针。
 
 #### select.label.color
@@ -5741,6 +5745,7 @@ data: [                        data: [                        data: [
 
 *   如果为 `true` 或 `'radial'`，则为径向排布。（`'radial'` 字面量从 `v5.2.0` 开始支持）
 *   如果为 `'tangential'`，则为切向排布。（从 `v5.2.0` 开始支持）
+*   如果为 `'tangential-noflip'`，则为切向排布，不反转。（从 `v6.1.0` 开始支持）
 *   如果为 `number` ，旋转指定角度，从 -90 度到 90 度。正值是逆时针。
 
 #### data.label.textMargin
@@ -6899,6 +6904,7 @@ URL 为 `dataURI` 例如：
 
 *   如果为 `true` 或 `'radial'`，则为径向排布。（`'radial'` 字面量从 `v5.2.0` 开始支持）
 *   如果为 `'tangential'`，则为切向排布。（从 `v5.2.0` 开始支持）
+*   如果为 `'tangential-noflip'`，则为切向排布，不反转。（从 `v6.1.0` 开始支持）
 *   如果为 `number` ，旋转指定角度，从 -90 度到 90 度。正值是逆时针。
 
 ##### data.emphasis.label.color
@@ -7875,6 +7881,7 @@ borderDashOffset: 5
 
 *   如果为 `true` 或 `'radial'`，则为径向排布。（`'radial'` 字面量从 `v5.2.0` 开始支持）
 *   如果为 `'tangential'`，则为切向排布。（从 `v5.2.0` 开始支持）
+*   如果为 `'tangential-noflip'`，则为切向排布，不反转。（从 `v6.1.0` 开始支持）
 *   如果为 `number` ，旋转指定角度，从 -90 度到 90 度。正值是逆时针。
 
 ##### data.blur.label.color
@@ -8859,6 +8866,7 @@ borderDashOffset: 5
 
 *   如果为 `true` 或 `'radial'`，则为径向排布。（`'radial'` 字面量从 `v5.2.0` 开始支持）
 *   如果为 `'tangential'`，则为切向排布。（从 `v5.2.0` 开始支持）
+*   如果为 `'tangential-noflip'`，则为切向排布，不反转。（从 `v6.1.0` 开始支持）
 *   如果为 `number` ，旋转指定角度，从 -90 度到 90 度。正值是逆时针。
 
 ##### data.select.label.color
