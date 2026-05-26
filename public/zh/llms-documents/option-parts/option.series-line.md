@@ -388,7 +388,7 @@ URL 为 `dataURI` 例如：
 
 ## cursor
 - **Type**: `string`
-- **Default**: `'pointer'`
+- **Default**: `pointer`
 
 鼠标悬浮时在图形元素上时鼠标的样式是什么。同 CSS 的 `cursor`。
 
@@ -411,13 +411,52 @@ URL 为 `dataURI` 例如：
 *   对于折线：剪裁掉折线的超出坐标系的部分。
 *   对于拐点图形：如果图形中心点超出坐标系，则此图形整体不显示；不会裁剪单个图形。
 
+## triggerEvent
+- **Type**: `boolean|string`
+- **Default**: `false`
+
+从 `v6.1.0` 开始支持
+
+鼠标和触摸事件是否发送给开发者注册的监听器（`chart.on('xxx', function (event) {})`）。
+
+支持的鼠标和触摸事件为 `'click'`、`'dblclick'`、`'mouseover'`、`'mouseout'`、`'mousemove'`、`'mousedown'`、`'mouseup'`、`'globalout'`、`'contextmenu'`。注意，鼠标和触摸事件都统一使用名字 `'mouse{xxx}'`。
+
+可取值：
+
+*   `true`: 允许对外发送事件。但是它也需要 `silent` 配置项为 `false` 才能真正发送事件。
+*   `false`: 禁止对外发送事件，哪怕 `silent` 配置项为 `false`。
+    
+*   `'line'`: 只有在线条上交互时派发事件。 Only the line is the interactive element.
+    
+*   `'area'`: 只有在区域（当使用 `areaStyle` 时候存在）上交互时派发事件。
+
+事件的参数包括：
+
+```
+{
+    componentType: 'series';
+    componentSubType: 'line';
+    seriesType: 'line';
+    // 序数（从 0 起），基于 echarts options 的声明。
+    componentIndex: number;
+    // 同 `componentIndex`。
+    seriesIndex: number;
+    // 声明的 `series.name`。
+    seriesName: seriesModel.name;
+    // 为了区分事件触发于 area 还是 line。
+    selfType: 'area' | 'line';
+}
+```
+
 ## triggerLineEvent
 - **Type**: `boolean`
 - **Default**: `false`
 
 从 `v5.2.2` 开始支持
 
-线条和区域面积是否触发事件
+从 `v6.1.0` 开始不推荐使用（deprecated）。Use `triggerEvent` instead.
+
+线条和区域面积是否触发事件。
 
 ## step
 - **Type**: `string|boolean`
@@ -14356,7 +14395,9 @@ tooltip 中数值显示部分的格式化回调函数。
 (value: number | string, dataIndex: number) => string
 ```
 
-`dataIndex` 参数 从 `v5.3.0` 开始支持
+从 `v5.5.0` 开始支持`dataIndex` 参数。但是其值当 `dataZoom` 存在时不合理，因为所取的值是数据被 `dataZoom` 过滤后的 index。
+
+从 `v6.1.0` 开始支持`dataIndex` 参数修正 `dataZoom` 过滤前的 index
 
 示例：
 
@@ -14686,7 +14727,14 @@ URL 为 `dataURI` 例如：
 - **Type**: `boolean`
 - **Default**: `false`
 
-图形是否不响应和触发鼠标事件，默认为 false，即响应和触发鼠标事件。
+图形是否不响应和用户交互（鼠标和触摸事件）。
+
+*   `true`: 图形不响应用户交互。这导致：
+    *   用户交互功能被禁止，例如 `tooltip`、鼠标悬浮时的状态变化（`emphasis`），鼠标悬浮时的联动等。
+    *   对外的鼠标和触摸事件不再发送给开发者注册的监听器（`chart.on('xxx', listener)`）。
+*   `false`:
+    *   用户交互功能不被此配置项禁止，但是是否可交互仍取决于其他相关配置项的设置。
+    *   对外的鼠标和触摸事件不被此配置项禁止，但是是否发送仍取决于其他配置项，一般是 `triggerEvent`（如果支持此配置项的话）。
 
 ### markPoint.label
 - **Type**: `Object`
@@ -20098,7 +20146,14 @@ animationDelayUpdate: function (idx) {
 - **Type**: `boolean`
 - **Default**: `false`
 
-图形是否不响应和触发鼠标事件，默认为 false，即响应和触发鼠标事件。
+图形是否不响应和用户交互（鼠标和触摸事件）。
+
+*   `true`: 图形不响应用户交互。这导致：
+    *   用户交互功能被禁止，例如 `tooltip`、鼠标悬浮时的状态变化（`emphasis`），鼠标悬浮时的联动等。
+    *   对外的鼠标和触摸事件不再发送给开发者注册的监听器（`chart.on('xxx', listener)`）。
+*   `false`:
+    *   用户交互功能不被此配置项禁止，但是是否可交互仍取决于其他相关配置项的设置。
+    *   对外的鼠标和触摸事件不被此配置项禁止，但是是否发送仍取决于其他配置项，一般是 `triggerEvent`（如果支持此配置项的话）。
 
 ### markLine.symbol
 - **Type**: `string|Array`
@@ -29199,7 +29254,14 @@ animationDelayUpdate: function (idx) {
 - **Type**: `boolean`
 - **Default**: `false`
 
-图形是否不响应和触发鼠标事件，默认为 false，即响应和触发鼠标事件。
+图形是否不响应和用户交互（鼠标和触摸事件）。
+
+*   `true`: 图形不响应用户交互。这导致：
+    *   用户交互功能被禁止，例如 `tooltip`、鼠标悬浮时的状态变化（`emphasis`），鼠标悬浮时的联动等。
+    *   对外的鼠标和触摸事件不再发送给开发者注册的监听器（`chart.on('xxx', listener)`）。
+*   `false`:
+    *   用户交互功能不被此配置项禁止，但是是否可交互仍取决于其他相关配置项的设置。
+    *   对外的鼠标和触摸事件不被此配置项禁止，但是是否发送仍取决于其他配置项，一般是 `triggerEvent`（如果支持此配置项的话）。
 
 ### markArea.label
 - **Type**: `Object`
@@ -38721,7 +38783,14 @@ animationDelayUpdate: function (idx) {
 - **Type**: `boolean`
 - **Default**: `false`
 
-图形是否不响应和触发鼠标事件，默认为 false，即响应和触发鼠标事件。
+图形是否不响应和用户交互（鼠标和触摸事件）。
+
+*   `true`: 图形不响应用户交互。这导致：
+    *   用户交互功能被禁止，例如 `tooltip`、鼠标悬浮时的状态变化（`emphasis`），鼠标悬浮时的联动等。
+    *   对外的鼠标和触摸事件不再发送给开发者注册的监听器（`chart.on('xxx', listener)`）。
+*   `false`:
+    *   用户交互功能不被此配置项禁止，但是是否可交互仍取决于其他相关配置项的设置。
+    *   对外的鼠标和触摸事件不被此配置项禁止，但是是否发送仍取决于其他配置项，一般是 `triggerEvent`（如果支持此配置项的话）。
 
 ## animation
 - **Type**: `boolean`
@@ -39209,7 +39278,9 @@ tooltip 中数值显示部分的格式化回调函数。
 (value: number | string, dataIndex: number) => string
 ```
 
-`dataIndex` 参数 从 `v5.3.0` 开始支持
+从 `v5.5.0` 开始支持`dataIndex` 参数。但是其值当 `dataZoom` 存在时不合理，因为所取的值是数据被 `dataZoom` 过滤后的 index。
+
+从 `v6.1.0` 开始支持`dataIndex` 参数修正 `dataZoom` 过滤前的 index
 
 示例：
 
